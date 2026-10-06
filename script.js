@@ -336,11 +336,10 @@ renderHistory();
 renderAnalytics();
 
 
-// ===== V10 Theme + Chatbot =====
+// ===== V20 Premium NxtWave AI Assistant =====
 function applyTheme(theme){
   document.body.classList.toggle("theme-dark",theme==="dark");
-  const bright=document.getElementById("brightThemeBtn");
-  const dark=document.getElementById("darkThemeBtn");
+  const bright=document.getElementById("brightThemeBtn"),dark=document.getElementById("darkThemeBtn");
   if(bright)bright.classList.toggle("active",theme==="bright");
   if(dark)dark.classList.toggle("active",theme==="dark");
   localStorage.setItem("nxtwaveTheme",theme);
@@ -350,38 +349,76 @@ function setThemeChoice(theme){applyTheme(theme)}
 
 function toggleChat(){
   const c=document.getElementById("chat");
-  if(c)c.classList.toggle("show");
+  if(!c)return;
+  c.classList.toggle("show");
+  if(c.classList.contains("show")){
+    setTimeout(()=>document.getElementById("chatInput")?.focus(),180);
+  }
+}
+function escapeChatHtml(value){
+  return String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+}
+function formatChatText(text){
+  let s=escapeChatHtml(text);
+  s=s.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
+  s=s.replace(/`([^`]+)`/g,"<code>$1</code>");
+  s=s.replace(/\n/g,"<br>");
+  return s;
 }
 function addChatMessage(text,type){
+  const body=document.getElementById("chatBody");if(!body)return;
+  const d=document.createElement("div");d.className="msg "+type;
+  d.innerHTML=formatChatText(text);
+  body.appendChild(d);body.scrollTop=body.scrollHeight;
+}
+function showChatTyping(){
   const body=document.getElementById("chatBody");
-  if(!body)return;
-  const d=document.createElement("div");
-  d.className="msg "+type;
-  d.textContent=text;
-  body.appendChild(d);
-  body.scrollTop=body.scrollHeight;
+  const d=document.createElement("div");d.className="msg bot chat-typing";d.id="chatTyping";
+  d.innerHTML="<i></i><i></i><i></i>";body.appendChild(d);body.scrollTop=body.scrollHeight;
+}
+function hideChatTyping(){document.getElementById("chatTyping")?.remove()}
+
+async function getChatAnswer(q){
+  showChatTyping();
+  try{
+    const r=await fetch("/api/chat",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({message:q,evaluation:window.lastEvaluation||null})
+    });
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error||"Assistant unavailable");
+    await new Promise(resolve=>setTimeout(resolve,420));
+    hideChatTyping();
+    addChatMessage(d.answer||"I couldn't answer that right now.","bot");
+    if(d.action){
+      const body=document.getElementById("chatBody");
+      const wrap=document.createElement("div");wrap.className="chat-action";
+      const btn=document.createElement("button");btn.textContent=d.action.label;
+      btn.onclick=()=>runChatAction(d.action.type);wrap.appendChild(btn);body.appendChild(wrap);body.scrollTop=body.scrollHeight;
+    }
+  }catch(e){
+    hideChatTyping();
+    addChatMessage("I couldn't connect to the assistant right now. Please try again in a moment.","bot");
+  }
 }
 async function sendChat(){
-  const input=document.getElementById("chatInput");
-  const q=input?.value.trim();
+  const input=document.getElementById("chatInput"),q=input?.value.trim();
   if(!q)return;
-  input.value="";
-  addChatMessage(q,"user");
-  try{
-    const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:q,evaluation:window.lastEvaluation||null})});
-    const d=await r.json();
-    addChatMessage(d.answer||"I couldn't answer that right now.","bot");
-  }catch(e){
-    addChatMessage("The AI assistant backend is unavailable. Please make sure server.py is running.","bot");
-  }
+  input.value="";addChatMessage(q,"user");await getChatAnswer(q);
 }
 async function ask(q){
-  addChatMessage(q,"user");
-  try{
-    const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:q,evaluation:window.lastEvaluation||null})});
-    const d=await r.json();
-    addChatMessage(d.answer||"I couldn't answer that right now.","bot");
-  }catch(e){
-    addChatMessage("The AI assistant backend is unavailable. Please make sure server.py is running.","bot");
-  }
+  addChatMessage(q,"user");await getChatAnswer(q);
+}
+function quickAction(type){
+  if(type==="register"){addChatMessage("🚀 Register for the workshop","user");getChatAnswer("How do I register?");return}
+  if(type==="evaluate"){addChatMessage("📊 Evaluate my project","user");getChatAnswer("How does project evaluation work?");return}
+  if(type==="referral"){addChatMessage("🎁 Referral program","user");getChatAnswer("How do referrals work?");return}
+  if(type==="workshop"){addChatMessage("⚡ Workshop details","user");getChatAnswer("What is the NxtWave workshop and what will I build?");return}
+}
+function runChatAction(type){
+  if(type==="register"){toggleChat();openModal();return}
+  if(type==="evaluate"){toggleChat();scrollToId("evaluation");return}
+  if(type==="referral"){toggleChat();scrollToId("referrals");return}
+  if(type==="workshop"){toggleChat();window.scrollTo({top:0,behavior:"smooth"});return}
 }

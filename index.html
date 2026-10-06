@@ -272,12 +272,44 @@
 </section>
 </main>
 
-<div class="chat-launch" onclick="toggleChat()">✦</div>
-<div class="chat-window" id="chat">
-<div class="chat-head"><div><b>NxtWave AI Assistant</b><small>Workshop + project evaluation assistant</small></div><button onclick="toggleChat()">×</button></div>
-<div class="chat-body" id="chatBody"><div class="bot msg">Hi! 👋 I can help with the workshop, referrals and your project evaluation. After analysis, ask me why your project received its score.</div>
-<div class="quick"><button onclick="ask('How does project evaluation work?')">Evaluation</button><button onclick="ask('How do referrals work?')">Referrals</button><button onclick="ask('What will I build?')">Workshop</button></div></div>
-<div class="chat-input"><input id="chatInput" placeholder="Ask about the workshop or evaluation..." onkeydown="if(event.key==='Enter')sendChat()"><button onclick="sendChat()">→</button></div>
+<button class="chat-launch" onclick="toggleChat()" aria-label="Open NxtWave AI Assistant">
+  <span class="chat-spark">✦</span><span class="chat-label">AI Assistant</span><span class="chat-dot"></span>
+</button>
+<div class="chat-window" id="chat" role="dialog" aria-label="NxtWave AI Assistant">
+  <div class="chat-head">
+    <div class="chat-brand">
+      <div class="chat-avatar">✦</div>
+      <div><b>NxtWave AI Assistant</b><small><span class="status-dot"></span> Online · Workshop + project assistant</small></div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()" aria-label="Close assistant">×</button>
+  </div>
+  <div class="chat-body" id="chatBody">
+    <div class="bot msg welcome-msg">
+      <div class="welcome-title">👋 Hi! I'm your NxtWave AI Assistant</div>
+      <div>I can help you register for the workshop, understand project evaluation, use your referral code, or improve your submission.</div>
+      <div class="welcome-note">Choose an option below or ask me anything.</div>
+    </div>
+    <div class="quick quick-grid">
+      <button onclick="quickAction('register')"><span>🚀</span><b>Register</b><small>Reserve your spot</small></button>
+      <button onclick="quickAction('evaluate')"><span>📊</span><b>Evaluate</b><small>How scoring works</small></button>
+      <button onclick="quickAction('referral')"><span>🎁</span><b>Referral</b><small>Use VISWESH23</small></button>
+      <button onclick="quickAction('workshop')"><span>⚡</span><b>Workshop</b><small>What you'll build</small></button>
+    </div>
+    <div class="suggested-label">TRY ASKING</div>
+    <div class="prompt-chips">
+      <button onclick="ask('How do I register?')">How do I register?</button>
+      <button onclick="ask('How is my project scored?')">How is my project scored?</button>
+      <button onclick="ask('What makes a strong AI project?')">What makes a strong AI project?</button>
+    </div>
+  </div>
+  <div class="chat-footer">
+    <div class="chat-context" id="chatContext"><span>✦</span> Evidence-based assistant</div>
+    <div class="chat-input">
+      <input id="chatInput" autocomplete="off" placeholder="Ask about registration or evaluation..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button onclick="sendChat()" aria-label="Send message">↑</button>
+    </div>
+    <small class="chat-disclaimer">Answers are based on the workshop and project-evaluation system.</small>
+  </div>
 </div>
 <div class="modal" id="modal">
 <div class="modal-box registration-box">

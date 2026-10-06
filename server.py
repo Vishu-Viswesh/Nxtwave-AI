@@ -343,17 +343,73 @@ def analyze(zpath):
     finally:shutil.rmtree(tmp,ignore_errors=True)
 
 def chat(q,e=None):
-    q=q.lower()
-    if e and any(k in q for k in ("score","why","evaluation","project","feedback")):
-        cats=e["categories"];weak=sorted(cats.items(),key=lambda kv:kv[1]["score"]/kv[1]["max"])[:2]
-        return f"Your project scored {e['score']}/100 with {e['confidence'].lower()} confidence. The two weakest evidence areas are {weak[0][0].replace('_',' ')} ({weak[0][1]['score']}/{weak[0][1]['max']}) and {weak[1][0].replace('_',' ')} ({weak[1][1]['score']}/{weak[1][1]['max']}). The score is based on files actually inspected."
-    if "referral" in q or "code" in q:return "Your demo referral code is VISWESH23. Verified registrations increase the referral tracker and campus ranking."
-    if "register" in q or "otp" in q:return "Register with your name, college, email and mobile number, then verify the 6-digit OTP."
-    if "evaluat" in q:return "Upload the actual project ZIP. I inspect its source files, README, dependencies, tests, AI/ML evidence and validation metrics. I do not invent missing evidence."
-    if "build" in q or "workshop" in q:return "The workshop is a 60-minute hands-on AI build followed by project submission and evidence-based feedback."
-    return "I can help with registration, referrals, the workshop and your project evaluation."
+    """Contextual workshop assistant. Answers are deterministic and grounded in this product."""
+    raw=(q or "").strip()
+    ql=raw.lower()
+
+    if e and any(k in ql for k in ("score","why","evaluation","project","feedback","weak","improve")):
+        cats=e.get("categories",{})
+        weak=sorted(
+            ((k,v) for k,v in cats.items() if v.get("max")),
+            key=lambda kv: kv[1].get("score",0)/kv[1].get("max",1)
+        )[:2]
+        lines=[
+            f"📊 **Your project score: {e.get('score',0)}/100**",
+            f"Confidence: **{e.get('confidence','Unknown')}**",
+            "",
+            "Your two weakest evidence areas are:"
+        ]
+        for k,v in weak:
+            lines.append(f"• **{k.replace('_',' ').title()}** — {v.get('score',0)}/{v.get('max',0)}")
+            if v.get("reason"): lines.append(f"  {v['reason']}")
+        lines += ["","The score is based only on files actually inspected. Missing evidence is not assumed to exist."]
+        return {"answer":"\n".join(lines),"action":{"label":"Open full evaluation","type":"evaluate"}}
+
+    if any(x in ql for x in ("register","registration","sign up","signup","join","otp")):
+        return {
+            "answer":"🚀 **Register for the free workshop**\n\nYou’ll enter your first name, last name, college, email and mobile number, then verify the 6-digit OTP.\n\nAfter verification, your registration is completed in the demo tracker.",
+            "action":{"label":"Start registration →","type":"register"}
+        }
+
+    if "referral" in ql or "refer" in ql or "campus rank" in ql:
+        return {
+            "answer":"🎁 **Referral program**\n\nYour demo referral code is **VISWESH23**. Share it with participants and track your referred registrations and campus ranking in the Referral Code & Tracker section.",
+            "action":{"label":"Open referral tracker","type":"referral"}
+        }
+
+    if any(x in ql for x in ("evaluat","score","rubric","mark","project review","how is my project")):
+        return {
+            "answer":"📊 **Evidence-based project evaluation**\n\nYour project is inspected across 6 criteria:\n• Problem Definition — 10 points\n• AI Implementation — 20 points\n• Code Quality — 20 points\n• Documentation — 15 points\n• Reproducibility — 15 points\n• Results / Validation — 20 points\n\nAI libraries alone do not prove an AI implementation. The evaluator looks for actual model/algorithm, training or inference, dataset and validation evidence.",
+            "action":{"label":"Evaluate my project →","type":"evaluate"}
+        }
+
+    if any(x in ql for x in ("strong ai","good ai","improve","better project","high score","score higher","what makes")):
+        return {
+            "answer":"⭐ **How to build a stronger AI project**\n\n1. Define a specific problem, target user and measurable objective.\n2. Show the actual model/algorithm and training or inference pipeline.\n3. Keep the code modular with dependencies and error handling.\n4. Document setup, architecture, dataset, methodology and limitations.\n5. Make the project reproducible with clear run instructions and versions.\n6. Report measurable results using appropriate validation and metrics.\n\nThe evaluator rewards evidence, not just a list of AI libraries."
+        }
+
+    if any(x in ql for x in ("workshop","build","60 minute","60 minutes","what will i","what do i build")):
+        return {
+            "answer":"⚡ **Build Your First AI Project in 60 Minutes**\n\nThe workshop is a hands-on AI build experience. For this challenge, the working asset should support the growth plan — examples include a landing page, WhatsApp flow, referral tracker, engagement tool, or automation of AI project evaluation.",
+            "action":{"label":"Explore workshop","type":"workshop"}
+        }
+
+    if any(x in ql for x in ("hello","hi","hey","who are you","what can you do","help")):
+        return {
+            "answer":"👋 **I’m your NxtWave AI Assistant.**\n\nI can guide you through registration, referrals and the workshop, and I can explain your evidence-based project evaluation after you run it.\n\nTry asking: “How do I register?”, “How is my project scored?”, or “How can I improve my AI project?”"
+        }
+
+    return {
+        "answer":"I can help with **registration, referrals, the workshop and evidence-based project evaluation**.\n\nTry asking:\n• How do I register?\n• How is my project scored?\n• What makes a strong AI project?\n• How do referrals work?"
+    }
 
 class H(SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if urlparse(self.path).path == "/health":
+            self.post({"status":"ok","service":"nxtwave-ai-build-sprint"})
+            return
+        return super().do_GET()
+
     def post(self,obj,status=200):
         raw=json.dumps(obj).encode();self.send_response(status);self.send_header("Content-Type","application/json");self.send_header("Content-Length",str(len(raw)));self.end_headers();self.wfile.write(raw)
     def do_POST(self):
@@ -408,11 +464,14 @@ class H(SimpleHTTPRequestHandler):
                         except PermissionError: pass
 
             elif p=="/api/chat":
-                n=int(self.headers.get("Content-Length","0"));d=json.loads(self.rfile.read(n) or "{}");self.post({"answer":chat(d.get("message",""),d.get("evaluation"))})
+                n=int(self.headers.get("Content-Length","0"));d=json.loads(self.rfile.read(n) or "{}");self.post(chat(d.get("message",""),d.get("evaluation")))
             else:self.send_error(404)
         except Exception as ex:
             print("API ERROR:", repr(ex), flush=True)
             self.post({"error":str(ex)},400)
 
 if __name__=="__main__":
-    os.chdir(ROOT);print("NxtWave evaluator: http://localhost:8000");ThreadingHTTPServer(("0.0.0.0",8000),H).serve_forever()
+    os.chdir(ROOT)
+    port=int(os.environ.get("PORT","8000"))
+    print(f"NxtWave evaluator: http://0.0.0.0:{port}",flush=True)
+    ThreadingHTTPServer(("0.0.0.0",port),H).serve_forever()

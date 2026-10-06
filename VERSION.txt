@@ -1,10 +1,1 @@
-NXTWAVE AI BUILD SPRINT
-VERSION 18
-
-Scorecard visualization upgrade:
-- Score circle now fills proportionally to the actual 0–100 score.
-- Circle and each rubric row use strict score ranges:
-  red 0–39, orange 40–59, yellow 60–79, green 80–100.
-- Every evaluation parameter now displays its score percentage and an
-  evidence-derived reason explaining why the score was awarded.
-- Dark mode preserves high contrast and range colors.
+NxtWave AI Build Sprint Premium v20 — Premium Contextual AI Assistant + Render Ready
