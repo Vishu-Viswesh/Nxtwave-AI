@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NxtWave — AI Build Sprint Growth OS</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="brand-mark">NXT<br><span>WAVE</span></div><div class="brand-sub">AI BUILD SPRINT</div></div>
+  <nav>
+    <a class="active" href="#home">Home</a><a href="#how">How it Works</a><a href="#referrals">Referrals</a>
+    <a href="#evaluation">AI Evaluation</a><a href="#leaderboard">Leaderboard</a><a href="#resources">Resources</a>
+  </nav>
+  <div class="theme-switcher" id="themeSwitcher" aria-label="Choose theme">
+  <button class="theme-option active" id="brightThemeBtn" onclick="setThemeChoice('bright')">☀ Bright</button>
+  <button class="theme-option" id="darkThemeBtn" onclick="setThemeChoice('dark')">☾ Dark</button>
+</div><button class="nav-cta" onclick="openModal()">Register Now →</button>
+</header>
+
+<main>
+<section class="hero" id="home">
+  <div class="hero-copy">
+    <div class="eyebrow">🚀 FREE ONLINE WORKSHOP</div>
+    <h1>Build Your First<br>AI Project in <span>60 Minutes</span></h1>
+    <p>A hands-on workshop where final-year engineering students go from idea → AI project → demo → automated project feedback.</p>
+    <div class="hero-meta"><span>▣ Live Online</span><span>◷ 60 Minutes</span><span>♟ Final-Year Students</span><span>◇ Free</span></div>
+    <div class="hero-actions"><button class="primary" onclick="openModal()">Register Now →</button><button class="secondary" onclick="scrollToId('how')">▷ See How It Works</button></div>
+    <div class="trust"><span class="green-dot"></span> Build • Submit • Get AI Feedback • Share</div>
+  </div>
+  <div class="hero-visual">
+    <div class="blob blob-a"></div><div class="blob blob-b"></div>
+    <div class="student-card"><div class="student-head"></div><div class="student-body"></div><div class="laptop"></div></div>
+    <div class="float-card card-one"><b>⚡</b><span>Build a Real AI Project<br><small>in 60 Minutes</small></span></div>
+    <div class="float-card card-two"><b>🤖</b><span>Automated AI Review<br><small>Instant project feedback</small></span></div>
+    <div class="float-card card-three"><b>🏆</b><span>Leaderboard<br><small>Campus recognition</small></span></div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="stat"><div class="icon blue">◉</div><div><b id="registered">287</b><span>Registrations</span><div class="progress"><i style="width:57%"></i></div><small>57% of 500</small></div></div>
+  <div class="stat"><div class="icon red">◎</div><div><b>500</b><span>Target Registrations</span><div class="progress"><i style="width:57%"></i></div><small>Campaign goal</small></div></div>
+  <div class="stat"><div class="icon blue">🤖</div><div><b id="evaluatedCount">96</b><span>Projects Evaluated</span><small class="plain">AI evaluation pipeline</small></div></div>
+  <div class="stat"><div class="icon yellow">🏫</div><div><b>12</b><span>Active Campuses</span><small class="plain">Student communities active</small></div></div>
+</section>
+
+<section class="two-col" id="how">
+  <div class="panel">
+    <div class="panel-head"><div><h2>How the Growth Loop Works</h2><p>Every registered student can become a distributor and a project creator.</p></div></div>
+    <div class="steps">
+      <div><strong>01</strong><span><b>Register</b><small>Student joins the 60-minute workshop.</small></span></div>
+      <div><strong>02</strong><span><b>Refer</b><small>Unique code tracks friends and campus impact.</small></span></div>
+      <div><strong>03</strong><span><b>Build</b><small>Student creates a mini AI project during/after the workshop.</small></span></div>
+      <div><strong>04</strong><span><b>Submit</b><small>Project enters the automated AI evaluation queue.</small></span></div>
+      <div><strong>05</strong><span><b>Get Feedback</b><small>AI returns score, strengths and improvement actions.</small></span></div>
+    </div>
+  </div>
+  <div class="panel referral" id="referrals">
+    <div class="panel-head"><h2>🎁 Referral Code & Tracker</h2><span class="live">LIVE PROTOTYPE</span></div>
+    <p>Turn every participant into a campus growth channel.</p>
+    <div class="code-box"><strong id="refCode">VISWESH23</strong><button onclick="copyCode()">▣</button></div>
+    <div class="tracker-grid">
+      <div><b id="myReferrals">23</b><small>Friends Referred</small></div>
+      <div><b id="refRank">#5</b><small>Campus Rank</small></div>
+      <div><b>Top 10%</b><small>Participant Rank</small></div>
+    </div>
+    <div class="progress-label"><span>Referral target</span><b id="refTarget">23 / 30</b></div>
+    <div class="progress big"><i id="refProgress" style="width:77%"></i></div>
+    <button class="whatsapp" onclick="shareWhatsApp()">◉ Share Invite on WhatsApp</button>
+  </div>
+</section>
+
+<section class="two-col" id="evaluation">
+<div class="panel evaluation">
+<div class="panel-head">
+  <div><h2>🤖 AI Project Evaluation</h2><p>Submit your actual project by uploading files or connecting a public GitHub repository. Scores are based on evidence found in the project.</p></div>
+  <span class="live">EVIDENCE-BASED</span>
+</div>
+
+<div class="source-tabs">
+  <button class="source-tab active" id="uploadTab" onclick="chooseSource('upload')">📁 Upload Project</button>
+  <button class="source-tab" id="githubTab" onclick="chooseSource('github')">◉ GitHub Repository</button>
+</div>
+
+<div id="uploadSource">
+  <div class="upload-zone" id="dropZone">
+    <input type="file" id="projectFile" accept=".zip,.tar,.gz" hidden>
+    <div class="upload-icon">↑</div>
+    <b>Drop your project ZIP here</b>
+    <span>or <button class="browse" onclick="document.getElementById('projectFile').click()">browse files</button></span>
+    <small>ZIP project · source code · README · notebooks · dependencies · tests</small>
+  </div>
+  <div class="selected-file" id="selectedFile" style="display:none"><span>▣</span><b id="fileName"></b><button onclick="clearProjectFile()">×</button></div>
+</div>
+
+<div id="githubSource" style="display:none">
+  <div class="github-box">
+    <div class="github-mark">◉</div>
+    <div class="github-input-wrap">
+      <label>Public GitHub repository URL</label>
+      <input id="githubUrlMain" type="url" placeholder="https://github.com/username/project">
+      <small>Example: github.com/Vishu-Viswesh/my-ai-project · public repositories only</small>
+    </div>
+  </div>
+  <div class="github-note">✓ We fetch the repository's source files and evaluate the actual code, documentation, dependencies and validation evidence.</div>
+</div>
+
+<div class="eval-options">
+  <div><label>Live Demo URL <small>(optional)</small></label><input id="demoUrl" placeholder="https://your-project.vercel.app"></div>
+  
+</div>
+
+<button class="primary full" id="evaluateBtn" onclick="evaluateRealProject()">Analyze Actual Project →</button>
+<div class="queue" id="evalStatus">Choose Upload Project or GitHub Repository to begin.</div>
+</div>
+
+<div class="panel scorecard">
+<div class="panel-head"><div><h2>Evidence-based Scorecard</h2><p class="scorecard-subtitle">Clear evidence, transparent scoring and actionable feedback.</p></div><span id="scoreConfidence">Waiting</span></div>
+<div class="score-circle"><b id="realScore">—</b><small>/100</small></div>
+<div class="score-legend" aria-label="Score ranges">
+<span><i class="r"></i>0–39 Critical</span>
+<span><i class="o"></i>40–59 Needs work</span>
+<span><i class="y"></i>60–79 Good</span>
+<span><i class="g"></i>80–100 Strong</span>
+</div>
+<div id="evidenceRows">
+<div class="score-row"><span>Problem definition</span><b>—</b></div>
+<div class="score-row"><span>AI implementation</span><b>—</b></div>
+<div class="score-row"><span>Code quality</span><b>—</b></div>
+<div class="score-row"><span>Documentation</span><b>—</b></div>
+<div class="score-row"><span>Reproducibility</span><b>—</b></div>
+<div class="score-row"><span>Results / validation</span><b>—</b></div>
+</div>
+<div class="feedback"><b>What the evaluator found</b><p id="realFeedback">The score will appear only after the actual project has been inspected.</p></div>
+<div class="evidence-list" id="evidenceList"></div>
+</div>
+</section>
+<section class="advanced-grid" id="projectIntelligence">
+  <div class="panel intelligence-panel">
+    <div class="panel-head">
+      <div>
+        <h2>🔬 Project Intelligence</h2>
+        <p>Evidence explorer, architecture map, security checks and safe execution preflight.</p>
+      </div>
+      <span class="live">DEEP ANALYSIS</span>
+    </div>
+
+    <div class="intelligence-tabs">
+      <button class="intel-tab active" onclick="showIntelTab('evidence')">Evidence Explorer</button>
+      <button class="intel-tab" onclick="showIntelTab('architecture')">Architecture</button>
+      <button class="intel-tab" onclick="showIntelTab('security')">Security</button>
+      <button class="intel-tab" onclick="showIntelTab('execution')">Execution</button>
+    </div>
+
+    <div class="intel-content" id="intelEvidence">
+      <div id="evidenceExplorer" class="evidence-explorer">
+        <div class="empty-intel">Submit a project to see score evidence here.</div>
+      </div>
+    </div>
+
+    <div class="intel-content" id="intelArchitecture" style="display:none">
+      <div id="architectureMap" class="architecture-map">
+        <div class="empty-intel">Architecture will be detected from the repository.</div>
+      </div>
+    </div>
+
+    <div class="intel-content" id="intelSecurity" style="display:none">
+      <div id="securityScan" class="security-grid">
+        <div class="empty-intel">Security scan will appear after evaluation.</div>
+      </div>
+    </div>
+
+    <div class="intel-content" id="intelExecution" style="display:none">
+      <div id="executionReport" class="execution-report">
+        <div class="empty-intel">Execution preflight will appear after evaluation.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel improvement-panel">
+    <div class="panel-head">
+      <div>
+        <h2>🎯 Improvement Copilot</h2>
+        <p>Find the highest-impact path to the next score milestone.</p>
+      </div>
+      <span id="targetScoreBadge">90+ TARGET</span>
+    </div>
+    <div class="target-row">
+      <div><small>Current score</small><b id="copilotCurrent">—</b></div>
+      <div><small>Target</small><b>90</b></div>
+      <div><small>Gap</small><b id="copilotGap">—</b></div>
+    </div>
+    <div id="improvementRoadmap" class="roadmap">
+      <div class="empty-intel">Evaluate a project to generate your personalized improvement roadmap.</div>
+    </div>
+    <button class="primary full" onclick="generateImprovementChecklist()">Generate Improvement Checklist →</button>
+  </div>
+</section>
+
+<section class="two-col" id="projectHistory">
+  <div class="panel">
+    <div class="panel-head">
+      <div><h2>📈 Project Evolution</h2><p>Track score changes across submissions and see whether improvements actually worked.</p></div>
+      <span id="historyDelta" class="delta-badge">No submissions yet</span>
+    </div>
+    <div id="historyChart" class="history-chart">
+      <div class="empty-intel">Your submission history will appear here after the first evaluation.</div>
+    </div>
+    <div id="historyTable" class="history-table"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div><h2>📑 Professional Evaluation Report</h2><p>Generate a portable evidence report for your portfolio, mentor or placement review.</p></div>
+    </div>
+    <div class="report-preview">
+      <div class="report-icon">▣</div>
+      <div><b>Evidence-based Project Report</b><small>Score · evidence · architecture · security · improvements</small></div>
+    </div>
+    <button class="primary full" onclick="downloadEvaluationReport()">Download Evaluation Report</button>
+    <button class="outline full" onclick="printEvaluationReport()">Print / Save as PDF</button>
+  </div>
+</section>
+
+<section class="panel analytics-panel" id="analytics">
+  <div class="panel-head">
+    <div><h2>📊 Workshop Intelligence Dashboard</h2><p>Aggregate insights from evaluated submissions and common improvement gaps.</p></div>
+    <span class="live">LIVE PROTOTYPE</span>
+  </div>
+  <div class="analytics-cards">
+    <div><b id="analyticsEvaluations">96</b><small>Projects evaluated</small></div>
+    <div><b id="analyticsAverage">—</b><small>Average score</small></div>
+    <div><b id="analyticsImprovement">—</b><small>Avg. improvement</small></div>
+    <div><b id="analyticsTests">—</b><small>Test readiness</small></div>
+  </div>
+  <div class="analytics-lower">
+    <div>
+      <h3>Most common improvement areas</h3>
+      <div id="gapBars" class="gap-bars">
+        <div><span>Documentation</span><i style="width:72%"></i><b>72%</b></div>
+        <div><span>Validation</span><i style="width:61%"></i><b>61%</b></div>
+        <div><span>Testing</span><i style="width:55%"></i><b>55%</b></div>
+        <div><span>Reproducibility</span><i style="width:48%"></i><b>48%</b></div>
+      </div>
+    </div>
+    <div>
+      <h3>Current project health</h3>
+      <div id="healthSummary" class="health-summary">Evaluate a project to calculate engineering health.</div>
+    </div>
+  </div>
+</section>
+
+
+<section class="two-col" id="leaderboard">
+  <div class="panel">
+    <div class="panel-head"><h2>🏆 Campus Leaderboard</h2><a href="#">View All →</a></div>
+    <div class="rank-row"><em>1</em><div class="campus-logo">V</div><span>VIT Vellore</span><div class="rankbar"><i style="width:92%"></i></div><b>124</b></div>
+    <div class="rank-row"><em>2</em><div class="campus-logo">A</div><span>Amrita Vishwa Vidyapeetham</span><div class="rankbar"><i style="width:74%"></i></div><b>98</b></div>
+    <div class="rank-row"><em>3</em><div class="campus-logo">S</div><span>SRM University</span><div class="rankbar"><i style="width:66%"></i></div><b>87</b></div>
+    <div class="rank-row"><em>4</em><div class="campus-logo">I</div><span>IIIT Hyderabad</span><div class="rankbar"><i style="width:58%"></i></div><b>76</b></div>
+    <div class="rank-row"><em>5</em><div class="campus-logo">B</div><span>BMS College of Engineering</span><div class="rankbar"><i style="width:52%"></i></div><b>69</b></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>✦ AI Sharing Message Studio</h2></div>
+    <p>Create a message matched to your audience and tone.</p>
+    <div class="select-grid"><div><label>Audience</label><select id="audience"><option>CSE 2026 batch</option><option>College club</option><option>Placement group</option></select></div><div><label>Tone</label><select id="tone"><option>Friendly</option><option>Professional</option><option>Urgent</option></select></div></div>
+    <div class="ai-message" id="aiMessage">Hey! 👋 NxtWave is hosting a FREE AI workshop. Build a real project in 60 minutes and use VISWESH23 to register.</div>
+    <button class="outline" onclick="generateMessage()">✦ Generate Message</button>
+  </div>
+</section>
+</main>
+
+<div class="chat-launch" onclick="toggleChat()">✦</div>
+<div class="chat-window" id="chat">
+<div class="chat-head"><div><b>NxtWave AI Assistant</b><small>Workshop + project evaluation assistant</small></div><button onclick="toggleChat()">×</button></div>
+<div class="chat-body" id="chatBody"><div class="bot msg">Hi! 👋 I can help with the workshop, referrals and your project evaluation. After analysis, ask me why your project received its score.</div>
+<div class="quick"><button onclick="ask('How does project evaluation work?')">Evaluation</button><button onclick="ask('How do referrals work?')">Referrals</button><button onclick="ask('What will I build?')">Workshop</button></div></div>
+<div class="chat-input"><input id="chatInput" placeholder="Ask about the workshop or evaluation..." onkeydown="if(event.key==='Enter')sendChat()"><button onclick="sendChat()">→</button></div>
+</div>
+<div class="modal" id="modal">
+<div class="modal-box registration-box">
+<button class="modal-close" onclick="closeModal()">×</button>
+
+<div id="registrationStep">
+<div class="eyebrow">FREE ONLINE WORKSHOP</div>
+<h2>Reserve your spot</h2>
+<p class="modal-sub">Build a real AI project in 60 minutes.</p>
+
+<div class="name-grid">
+<div class="field"><label>First name <span>*</span></label><input id="firstName" autocomplete="given-name" placeholder="Enter first name"><small class="field-error" id="firstNameError"></small></div>
+<div class="field"><label>Last name <span>*</span></label><input id="lastName" autocomplete="family-name" placeholder="Enter last name"><small class="field-error" id="lastNameError"></small></div>
+</div>
+
+<div class="field"><label>College / University <span>*</span></label><input id="college" autocomplete="organization" placeholder="Enter your college / university"><small class="field-error" id="collegeError"></small></div>
+
+<div class="field"><label>College email <span>*</span></label><input id="email" type="email" autocomplete="email" placeholder="name@college.edu"><small class="field-error" id="emailError"></small></div>
+
+<div class="field">
+<label>Mobile number <span>*</span></label>
+<div class="phone-row">
+<select id="countryCode" aria-label="Country code">
+<option value="+91">🇮🇳 India +91</option><option value="+1">🇺🇸 United States +1</option><option value="+44">🇬🇧 United Kingdom +44</option><option value="+61">🇦🇺 Australia +61</option><option value="+65">🇸🇬 Singapore +65</option><option value="+971">🇦🇪 UAE +971</option><option value="+81">🇯🇵 Japan +81</option><option value="+49">🇩🇪 Germany +49</option><option value="+33">🇫🇷 France +33</option><option value="+94">🇱🇰 Sri Lanka +94</option>
+</select>
+<input id="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="Mobile number">
+</div>
+<small class="field-hint">We’ll send a one-time verification code to this number.</small>
+<small class="field-error" id="phoneError"></small>
+</div>
+
+<div class="referral-mini"><span>Referral code</span><b>VISWESH23</b></div>
+<button class="primary full" onclick="sendOTP()">Send OTP & Continue →</button>
+<div class="secure-note">🔒 Your details are used only for workshop registration and verification.</div>
+</div>
+
+<div id="otpStep" style="display:none">
+<div class="otp-icon">✓</div><div class="eyebrow">VERIFY MOBILE NUMBER</div><h2>Enter your OTP</h2>
+<p class="modal-sub">We sent a 6-digit verification code to <b id="maskedPhone"></b>.</p>
+<div class="otp-inputs">
+<input maxlength="1" inputmode="numeric" id="otp1"><input maxlength="1" inputmode="numeric" id="otp2"><input maxlength="1" inputmode="numeric" id="otp3"><input maxlength="1" inputmode="numeric" id="otp4"><input maxlength="1" inputmode="numeric" id="otp5"><input maxlength="1" inputmode="numeric" id="otp6">
+</div>
+<small class="field-error otp-error" id="otpError"></small>
+<button class="primary full" onclick="verifyOTP()">Verify & Complete Registration →</button>
+<div class="otp-footer"><span id="otpTimer">Resend OTP in 30s</span><button id="resendOtp" onclick="sendOTP(true)" disabled>Resend OTP</button></div>
+<div class="demo-otp" id="demoOtpNotice">Demo mode: generated OTP will appear here.</div>
+</div>
+
+<div id="successStep" style="display:none">
+<div class="success-icon">✓</div><div class="eyebrow">REGISTRATION CONFIRMED</div><h2>You’re in!</h2>
+<p class="modal-sub">Your workshop registration has been verified successfully.</p>
+<div class="success-card"><span>Your referral code</span><b>VISWESH23</b><small>Share it with friends to increase your campus rank.</small></div>
+<button class="primary full" onclick="closeModal()">Done →</button>
+</div>
+</div></div>
+<div class="toast" id="toast">Done</div>
+<footer id="resources">NxtWave AI Build Sprint · Premium growth prototype · Demo data should be connected to a real backend before production.</footer>
+<script src="script.js?v=15"></script>
+</body></html>
