@@ -14,7 +14,8 @@
     <a class="active" href="#home">Home</a><a href="#how">How it Works</a><a href="#referrals">Referrals</a>
     <a href="#evaluation">AI Evaluation</a><a href="#leaderboard">Leaderboard</a><a href="#resources">Resources</a>
   </nav>
-  <div class="theme-switcher" id="themeSwitcher" aria-label="Choose theme">
+  <button class="account-nav" id="accountNav" onclick="openAccountModal()">Sign in</button>
+<div class="theme-switcher" id="themeSwitcher" aria-label="Choose theme">
   <button class="theme-option active" id="brightThemeBtn" onclick="setThemeChoice('bright')">☀ Bright</button>
   <button class="theme-option" id="darkThemeBtn" onclick="setThemeChoice('dark')">☾ Dark</button>
 </div><button class="nav-cta" onclick="openModal()">Register Now →</button>
@@ -112,6 +113,11 @@
   
 </div>
 
+<div class="auth-gate" id="evaluationAuthGate">
+  <div class="auth-gate-icon">🔒</div>
+  <div><b>Sign in to evaluate a project</b><small>Your evaluations, scores and project history are saved to your account.</small></div>
+  <button class="outline" onclick="openAccountModal()">Sign in / Create account →</button>
+</div>
 <button class="primary full" id="evaluateBtn" onclick="evaluateRealProject()">Analyze Actual Project →</button>
 <div class="queue" id="evalStatus">Choose Upload Project or GitHub Repository to begin.</div>
 </div>
@@ -365,7 +371,25 @@
 <button class="primary full" onclick="closeModal()">Done →</button>
 </div>
 </div></div>
+
+<div class="modal" id="accountModal">
+  <div class="modal-box account-box">
+    <button class="modal-close" onclick="closeAccountModal()">×</button>
+    <div class="eyebrow">PROJECT ACCOUNT</div>
+    <h2 id="accountTitle">Welcome back</h2>
+    <p class="modal-sub" id="accountSubtitle">Sign in to evaluate projects and access your saved history.</p>
+    <div class="account-tabs">
+      <button id="loginTab" class="account-tab active" onclick="setAccountMode('login')">Sign in</button>
+      <button id="signupTab" class="account-tab" onclick="setAccountMode('signup')">Create account</button>
+    </div>
+    <div class="field" id="accountNameField" style="display:none"><label>Full name <span>*</span></label><input id="accountName" autocomplete="name" placeholder="Enter your name"><small class="field-error" id="accountNameError"></small></div>
+    <div class="field"><label>Email <span>*</span></label><input id="accountEmail" type="email" autocomplete="email" placeholder="name@example.com"><small class="field-error" id="accountEmailError"></small></div>
+    <div class="field"><label>Password <span>*</span></label><input id="accountPassword" type="password" autocomplete="current-password" placeholder="Minimum 6 characters"><small class="field-error" id="accountPasswordError"></small></div>
+    <button class="primary full" id="accountSubmit" onclick="submitAccount()">Sign in →</button>
+    <div class="secure-note">🔒 Demo account authentication. Connect a real auth provider before production.</div>
+  </div>
+</div>
 <div class="toast" id="toast">Done</div>
 <footer id="resources">NxtWave AI Build Sprint · Premium growth prototype · Demo data should be connected to a real backend before production.</footer>
-<script src="script.js?v=15"></script>
+<script src="script.js?v=20"></script>
 </body></html>

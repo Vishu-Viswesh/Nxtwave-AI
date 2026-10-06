@@ -69,6 +69,53 @@ window.addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
 let selectedProject=null;
 let evaluationSource="upload";
 
+// ===== V21 Account Gate =====
+let accountMode="login";
+function getAccount(){ try{return JSON.parse(localStorage.getItem("nxtwaveAccount")||"null")}catch(e){return null} }
+function isSignedIn(){return !!getAccount()}
+function refreshAccountUI(){
+  const a=getAccount(), nav=document.getElementById("accountNav"), gate=document.getElementById("evaluationAuthGate"), btn=document.getElementById("evaluateBtn");
+  if(nav){nav.textContent=a?`Hi, ${String(a.name||a.email.split("@")[0]).slice(0,16)} · Sign out`:"Sign in"; nav.classList.toggle("signed-in",!!a); nav.onclick=a?toggleAccount:openAccountModal;}
+  if(gate)gate.style.display=a?"none":"flex";
+  if(btn)btn.disabled=!a;
+}
+function openAccountModal(){document.getElementById("accountModal")?.classList.add("show");setAccountMode("login")}
+function closeAccountModal(){document.getElementById("accountModal")?.classList.remove("show")}
+function setAccountMode(mode){
+  accountMode=mode;
+  const signup=mode==="signup";
+  document.getElementById("loginTab")?.classList.toggle("active",!signup);
+  document.getElementById("signupTab")?.classList.toggle("active",signup);
+  document.getElementById("accountNameField").style.display=signup?"block":"none";
+  document.getElementById("accountTitle").textContent=signup?"Create your account":"Welcome back";
+  document.getElementById("accountSubtitle").textContent=signup?"Create an account to evaluate projects and track your improvement history.":"Sign in to evaluate projects and access your saved history.";
+  document.getElementById("accountSubmit").textContent=signup?"Create account →":"Sign in →";
+  ["accountNameError","accountEmailError","accountPasswordError"].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=""});
+}
+function submitAccount(){
+  const name=document.getElementById("accountName").value.trim(),email=document.getElementById("accountEmail").value.trim().toLowerCase(),pw=document.getElementById("accountPassword").value;
+  ["accountNameError","accountEmailError","accountPasswordError"].forEach(id=>document.getElementById(id).textContent="");
+  let ok=true;
+  if(accountMode==="signup"&&name.length<2){document.getElementById("accountNameError").textContent="Enter your name.";ok=false}
+  if(!validEmail(email)){document.getElementById("accountEmailError").textContent="Enter a valid email.";ok=false}
+  if(pw.length<6){document.getElementById("accountPasswordError").textContent="Use at least 6 characters.";ok=false}
+  if(!ok)return;
+  const existing=getAccount();
+  if(accountMode==="signup"){
+    localStorage.setItem("nxtwaveAccount",JSON.stringify({name,email,password:pw,createdAt:new Date().toISOString()}));
+    showToast("Account created · evaluation unlocked");
+  }else{
+    if(existing && existing.email===email && existing.password===pw){showToast("Signed in · evaluation unlocked");}
+    else if(!existing){document.getElementById("accountEmailError").textContent="No account found. Create an account first.";return}
+    else{document.getElementById("accountPasswordError").textContent="Incorrect email or password.";return}
+  }
+  closeAccountModal(); refreshAccountUI();
+}
+function toggleAccount(){
+  if(isSignedIn()){localStorage.removeItem("nxtwaveAccount");showToast("Signed out");refreshAccountUI();}else openAccountModal();
+}
+
+
 function chooseSource(source){
   evaluationSource=source;
   const upload=document.getElementById("uploadSource");
@@ -117,6 +164,7 @@ function normalizeGithubUrl(v){
   }catch(e){return ""}
 }
 async function evaluateRealProject(){
+  if(!isSignedIn()){showToast("Please sign in or create an account before evaluating.");openAccountModal();return}
   const b=document.getElementById("evaluateBtn"),status=document.getElementById("evalStatus");
   if(b.dataset.evaluating==="true")return;
 
@@ -334,6 +382,7 @@ function printEvaluationReport(){
 }
 renderHistory();
 renderAnalytics();
+refreshAccountUI();
 
 
 // ===== V20 Premium NxtWave AI Assistant =====
